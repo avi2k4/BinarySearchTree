@@ -60,7 +60,58 @@ public:
     }
     
     void del(int value) {
+        if (this->root == NULL) {
+            return;
+        }
         
+        struct TreeNode * previous = NULL;
+        struct TreeNode * current = this->root;
+        
+        // BEGIN SEARCHING FOR NODE TO DELETE
+        while (current != NULL && current->value != value) {
+            previous = current;
+            current = (value < current->value) ? current->left : current->right;
+        }
+
+        if (current == NULL) {
+            return;
+        }
+        
+        // To be deleted node has > 1 children
+        if (current->left != NULL && current->right != NULL) {
+            struct TreeNode * next = current->right;
+            previous = current;
+            
+            // Locate next
+            while (next->left != NULL) {
+                previous = next;
+                next = next->left;
+            }
+            
+            current->value = next->value;
+            current = next;
+        }
+
+        // To be deleted node has <= 1 children
+        TreeNode * next = (current->left != NULL) ? current->left : current->right;
+
+        // If root, then delete
+        if (previous == NULL) {
+            delete current;
+            // IMPORTANT otherwise segfault
+            this->root = NULL;
+            return;
+        }
+
+        // Node to be deleted is not a root node
+        if (current == previous->left) {
+            previous->left = next;
+        }
+        else {
+            previous->right = next;
+        }
+
+        delete current;
     }
     
     bool doesExist(int value) {
@@ -127,10 +178,17 @@ int main() {
     tree->add(15);
     tree->add(10);
     tree->add(1);
-    tree->add(20);
-   
+    tree->add(15);
+    tree->add(10);
+    tree->add(1);
     tree->print();
     
+    tree->del(15);
+    tree->del(10);
+    tree->del(1);
+
+    tree->print();
+
     std::cout << "Does exist 29: " << tree->doesExist(29) << std::endl;
     
     return 0;
