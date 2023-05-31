@@ -6,14 +6,17 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <cstring>
 
+// Tree node struct declaration
 struct TreeNode {
     int value;
     TreeNode * left;
     TreeNode * right;
 };
 
+// Binary search tree class declaration
 class BinarySearchTree {
 public:
     BinarySearchTree() {
@@ -93,7 +96,7 @@ public:
         }
 
         // To be deleted node has <= 1 children
-        TreeNode * next = (current->left != NULL) ? current->left : current->right;
+        struct TreeNode * next = (current->left != NULL) ? current->left : current->right;
 
         // If root, then delete
         if (previous == NULL) {
@@ -175,21 +178,96 @@ private:
 
 int main() {
     BinarySearchTree * tree = new BinarySearchTree();
-    tree->add(15);
-    tree->add(10);
-    tree->add(1);
-    tree->add(15);
-    tree->add(10);
-    tree->add(1);
-    tree->print();
     
-    tree->del(15);
-    tree->del(10);
-    tree->del(1);
+    std::cout << "How would you like to input numbers?" << std::endl;
+    std::cout << "[1] file" << std::endl;
+    std::cout << "[2] console" << std::endl;
+    
+    int method_input;
+    std::cin >> method_input;
+        
+    if (method_input == 1) {
+        std::cout << "Enter the name of the file" << std::endl;
 
-    tree->print();
+        char file_name[100];
+        std::cin >> file_name;
+        
+        std::ifstream file_input(file_name);
+        
+        if (!file_input) {
+            std::cout << "File doesn't exit. Exiting." << std::endl;
+            return 1;
+        }
+        
+        int num_input;
+        while (file_input >> num_input) {
+            tree->add(num_input);
+        }
+        
+        file_input.close();
+    }
+    else {
+        std::cout << "Type each number and end with 9999 to signal the end of your input" << std::endl;
 
-    std::cout << "Does exist 29: " << tree->doesExist(29) << std::endl;
+        int num_input = 0;
+        
+        while (num_input != 9999) {
+            std::cin >> num_input;
+            tree->add(num_input);
+        }
+    }
+    
+   
+     std::cout << "\nHere are the commands to interact with the Binary Search Tree:" << std::endl;
+     std::cout << "[1] to add a number" << std::endl;
+     std::cout << "[2] to delete a number" << std::endl;
+     std::cout << "[3] to check if a number exists in the tree" << std::endl;
+     std::cout << "[4] to print the tree" << std::endl;
+     std::cout << "[5] to end the program" << std::endl;
+   
+
+     while (true) {
+	std::cout << "\nPerform a command" << std::endl;
+
+        int cmd_input;
+        std::cin >> cmd_input;
+        
+        if (cmd_input == 1) {
+            std::cout << "Enter the number you want to add:" << std::endl;
+            
+            int input;
+            std::cin >> input;
+            
+            tree->add(input);
+            
+            std::cout << "Successfully added " << input << std::endl;
+        }
+        else if (cmd_input == 2) {
+            std::cout << "Enter the number you want to delete:" << std::endl;
+
+            int input;
+            std::cin >> input;
+            
+            tree->del(input);
+            std::cout << "Successfully deleted " << input << std::endl;
+        }
+        else if (cmd_input == 3) {
+            std::cout << "Enter the number you want to check:" << std::endl;
+            
+            int input;
+            std::cin >> input;
+        
+            std::cout << "The number " << (tree->doesExist(input) ? "exists!" : "doesn't exist!") << std::endl;
+        }
+        else if (cmd_input == 4) {
+            std::cout << "-------------------------------------" << std::endl;
+            tree->print();
+            std::cout << "-------------------------------------" << std::endl;
+        }
+        else if (cmd_input == 5) {
+            break;
+        }
+    }
     
     return 0;
 }
